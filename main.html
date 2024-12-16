@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XKING MINES PREDICTOR</title>
+    <style>
+        @keyframes starAnimation {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://i.ibb.co/qmS8LpR/images-36.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #e0f7fa;
+        }
+        .header-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        @keyframes glowing {
+            0% {
+                box-shadow: 0 0 12px 6px rgba(0, 0, 255, 0.4);
+            }
+            50% {
+                box-shadow: 0 10px 24px 12px rgba(0, 0, 255, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 12px 6px rgba(0, 0, 255, 0.4);
+            }
+        }
+        .top-photo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            background-color: #000;
+            animation: glowing 2s infinite ease-in-out;
+        }
+        .server-status, .id-status {
+            margin-left: 15px;
+            font-size: 24px;
+            color: #00ff00;
+            font-weight: bold;
+        }
+        #idDisplay {
+            color: #ffffff;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 40px auto;
+            position: relative;
+        }
+        .bold-text {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #e0f7fa;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+        .grid div {
+            width: 100%;
+            padding-top: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1));
+            border: 1px solid #0f4c75;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            color: #ffeb3b;
+            font-family: 'Arial', sans-serif;
+        }
+        .grid div.star {
+            animation: starAnimation 0.5s ease-in-out forwards;
+        }
+        .grid div.star::before {
+    content: '\2605'; /* Unicode for black star */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 64px; /* Increase the font size for a larger star */
+    color: blue; /* Set the star color to blue */
+    font-family: Arial, sans-serif; /* Use a regular font */
+}
+        .grid div:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 0, 255, 0.8);
+            cursor: pointer;
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        .buttons button#resultButton {
+            background: linear-gradient(135deg, #1e90ff, #007bff);
+        }
+        .buttons button#resultButton:hover {
+            background: linear-gradient(135deg, #007bff, #1e90ff);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .buttons button#resetButton {
+            background: linear-gradient(135deg, #e94560, #ff6f61);
+        }
+        .buttons button#resetButton:hover {
+            background: linear-gradient(135deg, #ff6f61, #e94560);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffeb3b;
+            margin-top: 20px;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .loading img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        /* Styles for Win and Loss buttons */
+        .feedback-buttons {
+            margin-top: 30px;
+        }
+        .feedback-buttons button {
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #fff;
+        }
+        #winButton {
+            background: #28a745;
+        }
+        #winButton:hover {
+            background: #218838;
+        }
+        #lossButton {
+            background: #dc3545;
+        }
+        #lossButton:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <img src="https://i.ibb.co/fSYNsMm/IMG-20241216-234832-427.jpg" alt="Top Photo" class="top-photo">
+        <div class="server-status">Server: Active</div>
+        <div class="id-status">ID: <span id="idDisplay">Loading...</span></div>
+    </div>
+    <div class="container">
+        <div class="bold-text">XKING 👑 MINES HACK</div>
+        <div class="grid">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <!-- Your existing HTML structure -->
+<div class="buttons">
+    <button id="resultButton">PREDICT💙</button>
+    <button id="resetButton">RECONNECT</button>
+</div>
+<div id="resultDisplay" class="result"></div>
+<div class="loading" id="loading">
+    <img src="https://i.imgur.com/llF5iyg.gif" alt="Loading">
+</div>
+
+<!-- Feedback buttons for WIN and LOSS -->
+<div class="feedback-buttons">
+    <button id="winButton">WIN ✅</button>
+    <button id="lossButton">LOSS ❌</button>
+</div>
+<div id="idMessage" class="message"></div>
+<div id="winMessage" class="message"></div>
+<div id="lossMessage" class="message"></div>
+<div id="idDisplay" class="message"></div> <!-- Added the idDisplay for showing the ID -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const gridContainer = document.querySelector('.grid');
+        const resultButton = document.getElementById('resultButton');
+        const resetButton = document.getElementById('resetButton');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const loadingIndicator = document.getElementById('loading');
+        const idDisplay = document.getElementById('idDisplay');
+        const idMessage = document.getElementById('idMessage');
+        const winMessage = document.getElementById('winMessage');
+        const lossMessage = document.getElementById('lossMessage');
+
+        let lastPredictedIndices = new Set();
+        let gridWeights = Array(25).fill(1); // Weight for each grid cell
+        const gridSize = 25; // 5x5 grid
+
+        // Generate predictions based on weights and adaptive logic
+        function generateAdaptivePredictions(count) {
+            const predictions = new Set();
+
+            // Dynamically adjust weights based on previous outcomes
+            const weightedIndices = [];
+            gridWeights.forEach((weight, index) => {
+                for (let i = 0; i < weight; i++) {
+                    weightedIndices.push(index);
+                }
+            });
+
+            // Generate predictions using weighted random selection
+            while (predictions.size < count) {
+                const prediction = weightedIndices[Math.floor(Math.random() * weightedIndices.length)];
+                if (!lastPredictedIndices.has(prediction)) {
+                    predictions.add(prediction);
+                }
+            }
+
+            lastPredictedIndices = new Set(predictions); // Update last predictions
+            return Array.from(predictions);
+        }
+
+        // Function to update the grid with predictions
+        function updateGrid(predictedIndices) {
+            const cells = gridContainer.children;
+            for (let i = 0; i < cells.length; i++) {
+                cells[i].classList.remove('star');
+            }
+            predictedIndices.forEach(index => {
+                if (cells[index]) {
+                    cells[index].classList.add('star');
+                }
+            });
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            loadingIndicator.style.display = 'flex';
+        }
+
+        // Hide loading indicator
+        function hideLoading() {
+            loadingIndicator.style.display = 'none';
+        }
+
+        // Show message
+        function showMessage(messageElement, message, duration) {
+            messageElement.textContent = message;
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.textContent = '';
+                messageElement.style.display = 'none';
+            }, duration);
+        }
+
+        // Predict button click event
+        resultButton.addEventListener('click', () => {
+            showLoading();
+            setTimeout(() => {
+                const predictedIndices = generateAdaptivePredictions(5);
+                updateGrid(predictedIndices);
+                resultDisplay.textContent = `5 CELL HACK ✅: ${predictedIndices.map(index => index + 1).join(', ')}`;
+                hideLoading();
+            }, 2000); // Simulate a 2-second loading time
+        });
+
+        // Reset button click event
+        resetButton.addEventListener('click', () => {
+            showLoading();
+            setTimeout(() => {
+                resultDisplay.textContent = '';
+                updateGrid([]);
+                idDisplay.textContent = 'Loading...'; // Reset ID display
+                loadUserID(); // Reload the user ID
+                showMessage(idMessage, 'ID CONNECTED ✅', 2000); // Show ID message
+                hideLoading();
+            }, 4000); // Show loading for 4 seconds
+        });
+
+        // Function to retrieve the user ID from session storage
+        function loadUserID() {
+            const userId = sessionStorage.getItem('userID');
+            idDisplay.textContent = userId ? userId : 'No ID Found';
+        }
+
+        // Initial loading of user ID
+        loadUserID();
+
+        // Win button click event
+        document.getElementById('winButton').addEventListener('click', () => {
+            showLoading();
+            setTimeout(() => {
+                alert('Congratulations! You have recorded a WIN!');
+                // Increase weights for successful predictions
+                lastPredictedIndices.forEach(index => gridWeights[index]++);
+                showMessage(winMessage, 'WOW calculating...next game.', 2000); // Show win message
+                hideLoading();
+            }, 3000); // Simulate a 3-second loading time
+        });
+
+        // Loss button click event
+        document.getElementById('lossButton').addEventListener('click', () => {
+            showLoading();
+            setTimeout(() => {
+                alert('Sorry, you have recorded a LOSS!');
+                // Reduce weights for unsuccessful predictions
+                lastPredictedIndices.forEach(index => {
+                    if (gridWeights[index] > 1) gridWeights[index]--;
+                });
+                showMessage(lossMessage, 'New accuracy calculated.', 2000); // Show loss message
+                hideLoading();
+            }, 2000); // Simulate a 2-second loading time
+        });
+    });
+</script>
+</body>
+</html>
